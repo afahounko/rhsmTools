@@ -32,6 +32,8 @@ parser.add_option("-d", "--debug", dest='debug', help="print more details for de
                   action='store_true')
 parser.add_option("-s", "--subscription-management-app", dest='sma',
                   help="Which Subscription Management Application to download manifests from", metavar="SMA")
+parser.add_option("-o", "--without-timestamp", dest='notimestamp',
+                  help="Download manifest without timestamp", default=False, action='store_true')
 parser.add_option("--host", dest='portal_host', help="RHSM host to use (Default subscription.rhsm.redhat.com)",
                   default="subscription.rhsm.redhat.com")
 (options, args) = parser.parse_args()
@@ -46,6 +48,7 @@ else:
     password = options.password
     portal_host = options.portal_host
     sma = options.sma
+
 
 if not password:
     password = getpass.getpass("%s's password:" % login)
@@ -125,7 +128,11 @@ for consumer in consumerdata:
                 base64string = base64.encodestring('%s:%s' % (login, password)).strip()
                 request.add_header("Authorization", "Basic %s" % base64string)
                 result = urllib2.urlopen(request)
-                manifest_file = "%s_Generated_%s.zip" % (consumerName, timestamp)
+                if option.notimestamp:
+                    manifest_file = "%s.zip" % (consumerName)
+                else:
+                    manifest_file = "%s_Generated_%s.zip" % (consumerName, timestamp) 
+                
                 if options.debug:
                     print "\tWriting Manifest to %s" % manifest_file
                 with open(manifest_file, "wb") as manifest:
