@@ -128,7 +128,7 @@ for consumer in consumerdata:
                 base64string = base64.encodestring('%s:%s' % (login, password)).strip()
                 request.add_header("Authorization", "Basic %s" % base64string)
                 result = urllib2.urlopen(request)
-                if option.notimestamp:
+                if options.notimestamp:
                     manifest_file = "%s.zip" % (consumerName)
                 else:
                     manifest_file = "%s_Generated_%s.zip" % (consumerName, timestamp) 
